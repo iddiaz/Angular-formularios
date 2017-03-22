@@ -1,3 +1,4 @@
+import { FormulariosPage } from './../../../../e2e/app.po';
 
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
@@ -24,7 +25,7 @@ export class DataComponent {
 
   // si el formulario es muy grande es conveniente hacer la construcción en el ngOnInit mejor, 
   // para que lo cargue una vez haya cargado la página y no antes.
-  constructor() { 
+  constructor() {
     console.log(this.usuario);
 
     this.forma = new FormGroup({
@@ -57,7 +58,22 @@ export class DataComponent {
       // aqui tendremos que pasarle el valor del contexto local porque this cambia desde donde se ejecuta
       this.noIgual.bind(this.forma)
     ]);
+
+    // Detectar cambios en cualquier campo del formulario
+    // valuechanges retorna un observable por lo tanto me puedo suscribir
+    this.forma.valueChanges
+      .subscribe( data => console.log(data));
+
+    // Detectar cambios en un campo específico de formulario
+    this.forma.controls['username'].valueChanges
+      .subscribe( data => console.log(data));
+    
+    // También podemos suscribirnos al estado de los cambios
+    this.forma.controls['username'].statusChanges
+      .subscribe( data => console.log(data));
    }
+
+
 
     agregarPasatiempo(){
      // indicamos a typescript que es un arreglo asi...

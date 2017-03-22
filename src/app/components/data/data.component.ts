@@ -18,15 +18,16 @@ export class DataComponent {
     },
     correo: 'correo@ivandiazdiaz.com',
     // pasatiempos: ['correr', 'dormir', 'comer']
-  }
+  };
 
-  //si el formulario es muy grande es conveniente hacer la construcción en el ngOnInit mejor, para que lo cargue una vez haya cargado la página y no antes.
+  // si el formulario es muy grande es conveniente hacer la construcción en el ngOnInit mejor, 
+  // para que lo cargue una vez haya cargado la página y no antes.
   constructor() { 
     console.log(this.usuario);
 
     this.forma = new FormGroup({
       'nombrecompleto': new FormGroup({
-        //1a. -carga de la data al formulario a partir del objeto, este metodo es válido pero nada práctico
+        // 1a. -carga de la data al formulario a partir del objeto, este metodo es válido pero nada práctico
         'nombre': new FormControl( this.usuario.nombrecompleto.nombre, [ Validators.required,
                                          Validators.minLength(3) ] ),
         'apellido': new FormControl( '', [Validators.required,
@@ -37,26 +38,58 @@ export class DataComponent {
           ]),
       'pasatiempos': new FormArray([
         new FormControl('Correr', Validators.required )
-      ])
+      ]),
+      'password1': new FormControl('', Validators.required ),
+      // esto se podria validar igual que el resto, pero lo vamos hacer según la linea 48
+      'password2': new FormControl( )
     });
     //  1b- es más cómodo hacerlo asi, si tiene la misma estructura, recorrera el objeto y le aplicará todos los valores.
     // this.forma.setValue(this.usuario);
+
+    // otra forma de validar
+    this.forma.controls['password2'].setValidators([
+      Validators.required,
+      // aqui tendremos que pasarle el valor del contexto local porque this cambia desde donde se ejecuta
+      this.noIgual.bind(this.forma)
+    ]);
    }
 
     agregarPasatiempo(){
-     //indicamos a typescript que es un arreglo asi...
+     // indicamos a typescript que es un arreglo asi...
      (<FormArray>this.forma.controls['pasatiempos']).push(
        new FormControl('', Validators.required)
      );
    }
 
-    //validaciónes personalizadas
-    noDiaz( control: FormControl ): { [s:string]:boolean }  {
-      if( control.value === 'diaz' ) {
+    // validaciónes personalizadas
+    noDiaz( control: FormControl ): { [s: string]: boolean }  {
+      if ( control.value === 'diaz' ) {
         return {
           nodiaz: true
-          //si regreso algo es que la validación falla
-        }        
+          // si regreso algo es que la validación falla
+        };
+      }
+      return null;
+    }
+
+    noIgual( control: FormControl ): { [s: string]: boolean }  {
+      console.log('this es', this);
+      // if( control.value !== this.forma.controls['password1'].value ) {
+      //   return {
+      //     noigulales: true
+      //     //si regreso algo es que la validación falla
+      //   }
+      // }
+      // return null;
+
+      // ajustamos el valor de forma en la funcion
+      let forma: any = this;
+
+      if( control.value !== forma.controls['password1'].value ) {
+        return {
+          noigulales: true
+          // si regreso algo es que la validación falla
+        }
       }
       return null;
     }
@@ -66,7 +99,7 @@ export class DataComponent {
      console.log(this.forma.value);
      console.log(this.forma);
 
-     //2a.- con reset podemos resetear el formulario a sus valores originales antes de que fuera tocado niongún componente
+    // 2a.- con reset podemos resetear el formulario a sus valores originales antes de que fuera tocado niongún componente
     //  this.forma.reset({
     //    nombrecompleto: {
     //      nombre: 'Peter',
@@ -75,7 +108,7 @@ export class DataComponent {
     //    correo: ''
     //  });
 
-     //2b.- otro método de hacerlo podria ser así, aunque es más engorroso ya que requiere escribir cada campo.
+     // 2b.- otro método de hacerlo podria ser así, aunque es más engorroso ya que requiere escribir cada campo.
     //  this.forma.controls['correo'].setValue('nuevocorreo@correo.com');
    }
 

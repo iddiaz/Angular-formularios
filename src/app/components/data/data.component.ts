@@ -1,5 +1,6 @@
+
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-data',
@@ -15,7 +16,8 @@ export class DataComponent {
       nombre: 'Ivan',
       apellido: 'Diaz'
     },
-    correo: 'correo@ivandiazdiaz.com'
+    correo: 'correo@ivandiazdiaz.com',
+    // pasatiempos: ['correr', 'dormir', 'comer']
   }
 
   //si el formulario es muy grande es conveniente hacer la construcción en el ngOnInit mejor, para que lo cargue una vez haya cargado la página y no antes.
@@ -31,10 +33,13 @@ export class DataComponent {
       }),
       'correo': new FormControl( '', [ Validators.required,
                                        Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$")
-          ] )
+          ]),
+      'pasatiempos': new FormArray([
+        new FormControl('Correr', Validators.required )
+      ])
     });
     //  1b- es más cómodo hacerlo asi, si tiene la misma estructura, recorrera el objeto y le aplicará todos los valores.
-    this.forma.setValue(this.usuario);
+    // this.forma.setValue(this.usuario);
    }
 
 
@@ -44,15 +49,22 @@ export class DataComponent {
 
      //2a.- con reset podemos resetear el formulario a sus valores originales antes de que fuera tocado niongún componente
      this.forma.reset({
-       nombrecompleto:{
+       nombrecompleto: {
          nombre: 'Peter',
          apellido: ''
        },
-       correo:''
+       correo: ''
      });
 
      //2b.- otro método de hacerlo podria ser así, aunque es más engorroso ya que requiere escribir cada campo.
      this.forma.controls['correo'].setValue('nuevocorreo@correo.com');
+   }
+
+   agregarPasatiempo(){
+     //indicamos a typescript que es un arreglo asi...
+     (<FormArray>this.forma.controls['pasatiempos']).push(
+       new FormControl('', Validators.required)
+     );
    }
 
 

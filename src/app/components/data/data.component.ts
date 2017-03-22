@@ -29,7 +29,8 @@ export class DataComponent {
         //1a. -carga de la data al formulario a partir del objeto, este metodo es válido pero nada práctico
         'nombre': new FormControl( this.usuario.nombrecompleto.nombre, [ Validators.required,
                                          Validators.minLength(3) ] ),
-        'apellido': new FormControl( '', Validators.required )
+        'apellido': new FormControl( '', [Validators.required,
+                                          this.noDiaz] )
       }),
       'correo': new FormControl( '', [ Validators.required,
                                        Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$")
@@ -42,30 +43,43 @@ export class DataComponent {
     // this.forma.setValue(this.usuario);
    }
 
+    agregarPasatiempo(){
+     //indicamos a typescript que es un arreglo asi...
+     (<FormArray>this.forma.controls['pasatiempos']).push(
+       new FormControl('', Validators.required)
+     );
+   }
+
+    //validaciónes personalizadas
+    noDiaz( control: FormControl ): { [s:string]:boolean }  {
+      if( control.value === 'diaz' ) {
+        return {
+          nodiaz: true
+          //si regreso algo es que la validación falla
+        }        
+      }
+      return null;
+    }
+
 
    guardarCambios() {
      console.log(this.forma.value);
      console.log(this.forma);
 
      //2a.- con reset podemos resetear el formulario a sus valores originales antes de que fuera tocado niongún componente
-     this.forma.reset({
-       nombrecompleto: {
-         nombre: 'Peter',
-         apellido: ''
-       },
-       correo: ''
-     });
+    //  this.forma.reset({
+    //    nombrecompleto: {
+    //      nombre: 'Peter',
+    //      apellido: ''
+    //    },
+    //    correo: ''
+    //  });
 
      //2b.- otro método de hacerlo podria ser así, aunque es más engorroso ya que requiere escribir cada campo.
-     this.forma.controls['correo'].setValue('nuevocorreo@correo.com');
+    //  this.forma.controls['correo'].setValue('nuevocorreo@correo.com');
    }
 
-   agregarPasatiempo(){
-     //indicamos a typescript que es un arreglo asi...
-     (<FormArray>this.forma.controls['pasatiempos']).push(
-       new FormControl('', Validators.required)
-     );
-   }
+
 
 
 }

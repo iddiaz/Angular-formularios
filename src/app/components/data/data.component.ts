@@ -2,6 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
+import { Observable } from 'rxjs/Rx';
+
 @Component({
   selector: 'app-data',
   templateUrl: './data.component.html',
@@ -41,7 +43,10 @@ export class DataComponent {
       ]),
       'password1': new FormControl('', Validators.required ),
       // esto se podria validar igual que el resto, pero lo vamos hacer según la linea 48
-      'password2': new FormControl( )
+      'password2': new FormControl( ),
+
+      // validación asíncrona
+      'username': new FormControl('', Validators.required, this.existeUsuario  )
     });
     //  1b- es más cómodo hacerlo asi, si tiene la misma estructura, recorrera el objeto y le aplicará todos los valores.
     // this.forma.setValue(this.usuario);
@@ -92,6 +97,21 @@ export class DataComponent {
         }
       }
       return null;
+    }
+
+    existeUsuario( control: FormControl ): Promise<any>|Observable<any> {
+      let promesa = new Promise(
+        (resolve, reject) => {
+          setTimeout( () => {
+            if( control.value === 'strider') {
+              resolve( { existe: true } );
+            } else {
+              resolve ( null );
+            }
+          }, 3000);
+        }
+      );
+      return promesa;
     }
 
 

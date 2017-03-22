@@ -3,8 +3,10 @@
 <!--en este caso el novalidate estaría de más ya que se encarga directamente angular al asignar la validacion en el codigo de logica-->
 <form [formGroup]="forma" (ngSubmit)="guardarCambios()">
 
-  <div>    
-    <div class="form-group row" [ngClass]="{'has-danger': !forma.get('nombre').valid}">
+  <div formGroupName="nombrecompleto">  
+      <!--el array del formGroup se puede recorrer de diversas formas-->
+      <!--[ngClass]="{'has-danger': !forma.get('nombre').valid}"-->
+    <div class="form-group row" [ngClass]="{'has-danger': !forma.controls['nombrecompleto'].controls['nombre'].valid}" >
       <label class="col-2 col-form-label">Nombre</label>
       <div class="col-8">
 
@@ -12,11 +14,11 @@
                type="text"
                placeholder="Nombre"
                formControlName="nombre">
-          <div *ngIf="forma.controls['nombre'].errors?.required" 
+          <div *ngIf="forma.get('nombrecompleto.nombre').errors?.required" 
                class="form-control-feedback">
                El nombre es requerido
           </div>
-          <div *ngIf="forma.controls['nombre'].errors?.minlength" 
+          <div *ngIf="forma.get('nombrecompleto.apellido').errors?.minlength" 
                class="form-control-feedback">
                Por lo menos tres caracteres
           </div>

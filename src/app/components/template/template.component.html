@@ -4,7 +4,7 @@
 
   <div>
 
-    <div class="form-group row">
+    <div class="form-group row" [ngClass]="{'has-danger': (nombre.errors?.required ||nombre.errors?.minlength) && nombre.touched }">
       <label class="col-2 col-form-label">Nombre</label>
       <div class="col-8">
 
@@ -14,7 +14,15 @@
                name="nombre"
                [(ngModel)]="usuario.nombre"
                minlength="4"
-               required>
+               required
+               #nombre="ngModel">
+        <div *ngIf="nombre.errors?.required && nombre.touched"
+              class="form-control-feedback">
+          Este campo es requerido
+        </div>
+        <div *ngIf="nombre.errors?.minlength">
+          Por lo menos {{nombre.errors.minlength.requiredLength}} caracteres
+        </div>
       </div>
     </div>
 
@@ -26,7 +34,16 @@
                type="text"
                placeholder="Apellido"
                name="apellido"
-               [(ngModel)]="usuario.apellido">
+               [(ngModel)]="usuario.apellido"
+               minlength="4"
+               #apellido="ngModel"
+               required>
+          <div *ngIf="apellido.errors?.required && apellido.touched" >
+            Este campo es requerido
+        </div>
+        <div *ngIf="apellido.errors?.minlength">
+            Al menos {{apellido.errors.minlength.requiredLength}} caracteres
+        </div>
       </div>
     </div>
 
@@ -41,19 +58,88 @@
              placeholder="Correo electrónico"
              name="correo"
              [(ngModel)]="usuario.correo"
-             required>
+             required  
+             #correo="ngModel"          
+             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+      <div *ngIf="correo.errors?.required && correo.touched" >
+        el correo es requerido
+      </div>
+       <div *ngIf="correo.errors?.pattern" >
+        el correo no tiene un formato correcto
+      </div>
+        
     </div>
   </div>
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Pais</label>
+    <div class="col-8">
+      <select [(ngModel)]="usuario.pais"
+              name="pais"
+              class="form-control">
+        <option value="">seleccione un pais</option>
+        <option *ngFor="let pais of paises"
+                [value]="pais.codigo">{{pais.nombre}}</option>
+        
+      </select>
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Sexo</label>
+    <div class="col-8">
+      <label *ngFor="let s of sexos"  
+             class="custom-control custom-radio">
+        <input  [(ngModel)]="usuario.sexo"
+                name="sexo" 
+                type="radio" 
+                [value]="s"
+                class="custom-control-input">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">{{s}}</span>
+      </label>
+
+      <!--<label class="custom-control custom-radio">
+        <input  [(ngModel)]="usuario.sexo"
+                name="sexo" 
+                type="radio" 
+                value="Mujer"
+                class="custom-control-input">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Mujer</span>
+      </label>   -->
+    </div>
+  </div>
+
+    <div class="form-group row">
+    <label class="col-2 col-form-label">Acepta</label>
+    <div class="col-8">
+      <label class="custom-control custom-checkbox">
+        <input [(ngModel)]="usuario.acepta"
+               name="acepta"
+               type="checkbox" class="custom-control-input"
+               required>
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Acepta las condiciones</span>
+      </label>
+    </div>
+  </div>
+
 
 
 
   <div class="form-group row">
     <label class="col-2 col-form-label">&nbsp;</label>
     <div class="input-group col-md-8">
-      <button type="submit" class="btn btn-outline-primary">
+      <button [disabled]="!forma.valid"
+              type="submit" 
+              class="btn btn-outline-primary">              
         Guardar
       </button>
     </div>
   </div>
-
+  <pre>
+       {{usuario | json}}
+  </pre>
 </form>
